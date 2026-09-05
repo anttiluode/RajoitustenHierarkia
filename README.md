@@ -42,6 +42,7 @@ Static reconstruction is treated as a weak mechanistic test. The primary assay i
 | **G3E — hard delta budget** | once current-world deltas transfer, do we need adaptive measurement selection? | **not yet**: at 8 post-change scalars greedy static reaches **72.50%** joint cause+address vs active-joint **62.50%**, active-address **54.44%**, random **50.83%**; full 168-panel = **100%** |
 | **G3F — stale baseline memory** | does remembered baseline evidence actually save measurements under slow substrate drift? | **yes, narrowly**: refresh-every gives **71.67%** at 16 calls/incident; periodic-4 gives **70.56%** at **10 calls/incident**; frozen decays to **52.78%**; one-sentinel refresh gets only **57.22%** at 9.94 calls/incident |
 | **G3G — sparse expectation cache** | if the useful baseline set is larger than memory, does sophisticated consolidation help? | LRU preserves **73.06%** joint accuracy vs no-cache **74.44%** while reducing calls **16.00→10.67/incident**; future-use oracle = **10.17**; random = **11.05**; lifetime-frequency over-consolidates after a regime switch |
+| **G3H — variable drift + sparse cache** | when both demand and the world change, does surprise-driven refresh beat a clock? | **not by the preregistered efficiency criterion**: residual-2 reaches **72.92%** at 12.23 calls/incident and only 3 stale uses, but TTL-4 has the best boring calls/correct (**16.35** vs residual **16.78**); residual nearly matches the hidden-phase oracle (**73.75%**) |
 
 CI reruns every executed gate/attacker on every PR.
 
@@ -65,15 +66,21 @@ Frozen memory is not enough: it falls to **52.78%** overall and reaches only **2
 
 > **For this assay, memory pays rent; active memory management does not.**
 
-G3G then removes the free initial memory and gives the observer an **empty 12-slot cache** facing **32 useful expectations** across four diagnostic contexts. The context distribution switches halfway through.
+G3G removes the free initial memory and gives the observer an **empty 12-slot cache** facing **32 useful expectations** across four diagnostic contexts. No cache buys 16 scalar measurements per incident and gets **74.44%** joint accuracy. LRU gets **73.06%** at **10.67 calls/incident**, while the future-use oracle only improves that to **10.17**. Random eviction is also strong at **11.05**.
 
-No cache buys 16 scalar measurements per incident and gets **74.44%** joint accuracy. LRU gets **73.06%** at **10.67 calls/incident**, cutting healthy-baseline reacquisition by two thirds and total calls by one third. The future-use oracle only improves that to **10.17 calls/incident**. Random eviction is also strong at **11.05** calls/incident and **74.72%** accuracy.
-
-The deliberately sticky LFU attacker exposes the cost of over-consolidation. Its healthy-baseline misses rise **1,680→2,400** after the regime switch, while LRU stays **960→960**. Old memories can remain accurate yet become economically useless when demand moves elsewhere.
+Lifetime-frequency retention exposes over-consolidation: its healthy-baseline misses rise **1,680→2,400** after the regime switch, while LRU stays **960→960**.
 
 > **Before teaching memory what is important, attack it with recency and random eviction.**
 
-The surviving architecture is now concrete and rather ordinary:
+G3H combines changing demand with a hidden stable → rapid-drift → stable substrate. This finally breaks plain LRU: it records **164 stale uses** and drops from **72.92%** in the first stable epoch to **60.83%** during the drift burst.
+
+Two distributed residual checks repair most of that. Residual-2 triggers 69 refreshes, leaves only **3 stale uses**, reaches **70.00%** during the burst and **72.92%** overall. That is only **0.83 points** below an unfair policy that knows the hidden drift phase, and residual-2 even uses fewer calls (**12.23 vs 12.67/incident**).
+
+But the stronger architectural claim still fails. TTL-4 gets **69.31%** at **11.33 calls/incident** and the best boring efficiency, **16.35 calls per correct diagnosis**, versus residual-2 **16.78**. Residual buys **3.61 points** more accuracy for **7.94%** more total calls. It is a useful Pareto option, not a demonstrated necessity.
+
+> **Prediction error can detect stale memory; it has not yet beaten a cheap age rule strongly enough to deserve architectural privilege.**
+
+The surviving mechanism is now concrete:
 
 ```text
 slow substrate / task regime
@@ -89,7 +96,9 @@ small static measurement cover
 diagnosis
 ```
 
-See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), [`GATE3D.md`](GATE3D.md), [`GATE3E.md`](GATE3E.md), [`GATE3F.md`](GATE3F.md), and [`GATE3G.md`](GATE3G.md).
+The cache needs two boring bookkeeping quantities before anything fancier: **reuse** and **age**. Residual surprise is useful when accuracy matters enough to pay for checking validity.
+
+See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), [`GATE3D.md`](GATE3D.md), [`GATE3E.md`](GATE3E.md), [`GATE3F.md`](GATE3F.md), [`GATE3G.md`](GATE3G.md), and [`GATE3H.md`](GATE3H.md).
 
 ## Connection to the recent repos
 
@@ -97,24 +106,29 @@ See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GA
 
 The strongest surviving piece from that family is now much less exotic: **expected consequences are reusable measurements**. Medium-timescale state is useful when storing a consequence now avoids buying the same evidence later. That is closer to calibration, caching, and black-box diagnosis than to a new neuron theory.
 
-## The next cheat to remove
+## Next: leave the toy world
 
-Gates 3F and 3G deliberately separated two failure modes:
+G3H is a good stopping boundary for synthetic cache-policy invention. We have already attacked static vs active measurement, free vs stale baseline memory, cache capacity, demand shift, and variable drift. Another synthetic retention heuristic would mostly tune this world.
 
-```text
-G3F: stored expectation becomes WRONG because substrate drifted
-G3G: stored expectation becomes UNUSED because demand moved elsewhere
-```
-
-Gate 3H should combine them and vary the slow drift timescale itself:
+The next useful test should move the mechanism into a real black-box diagnostic workload:
 
 ```text
-long stable epoch
-→ rapid drift episode
-→ new stable epoch
+real system / validation workload
+        ↓
+small reversible intervention panel
+        ↓
+cache expected healthy scalar outcomes
+        ↓
+incident / model / data change
+        ↓
+measure only what must be repurchased
+        ↓
+localize or repair the regression
 ```
 
-Now pure LRU can retain recently used but stale values, while fixed period-4 refresh can waste calls in stable epochs and lag during rapid drift. Only on that workload does distributed surprise or adaptive refresh get a fair chance to beat the boring baselines.
+`LentoOrava` / PulseTriage is the obvious bridge because it already turns addressed reversible rollbacks plus one expensive scalar KPI into sparse fault localization. The question is now practical: **can cached calibration outcomes cut repeated PulseTriage validation calls across successive regressions without materially reducing recovered KPI?**
+
+If the answer is no, stop carrying the memory layer into the product. If yes, we have an actual feature rather than another neuron metaphor.
 
 ## Claim boundary
 
