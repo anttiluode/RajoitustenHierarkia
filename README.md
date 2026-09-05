@@ -39,6 +39,7 @@ Static reconstruction is treated as a weak mechanistic test. The primary assay i
 | **G3B — fixed-panel attacker** | does G3A establish a need for adaptivity? | **no**: one learned fixed poke gives **98.33%**, two give **100%**; fixed event addresses made G3A too easy |
 | **G3C — moving address** | what if local changes can occur at any of 24 nodes? | at 3 pokes, cause label active=fixed **83.61%**, but joint cause+exact-address is active **66.39%** vs coarse-bin fixed **59.44%**, global fixed **57.22%**, random **49.17%** |
 | **G3D — unseen substrates** | does an invariant “causal address” survive different transport/wiring worlds? | with the full 168-measurement panel, absolute literal atlas collapses to **5.00%** joint accuracy, but simple current-world `after-before` delta reaches **99.17%** with a shared template and **98.33%** after random coordinate relabeling |
+| **G3E — hard delta budget** | once current-world deltas transfer, do we need adaptive measurement selection? | **not yet**: at 8 post-change scalars greedy static reaches **72.50%** joint cause+address vs active-joint **62.22%**, active-address **53.06%**, random **50.83%**; full 168-panel = **100%** |
 
 CI reruns every executed gate/attacker on every PR.
 
@@ -66,40 +67,54 @@ On 30 unseen substrates / 360 events, shared delta templates reach **99.17%** jo
 
 > **For this assay, the invariant address is not a new ontology. It is a change relative to the current world's remembered behavior.**
 
-That is differential change detection, not a new theorem. It is still a useful architectural clue because it says what medium memory should store: not a universal atlas, but local expectations for the current substrate.
+G3E then restores the severe post-change budget. Two adaptive policies are attacked by a learned static panel trained only on the 30 training substrates. At four probes there is essentially no active advantage. At six probes static and active-joint are tied (**52.22%** vs **51.67%** joint). At eight probes the static panel wins clearly: **72.50%** vs **62.22%** active-joint, **53.06%** active-address, and **50.83%** random.
 
-See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), and [`GATE3D.md`](GATE3D.md).
+The failure is informative. At eight probes active-joint actually has the best **cause-family** accuracy (**94.17%** vs static **90.28%**) but worse exact address coverage (**62.22%** vs **73.89%**). Generic information-separation spends evidence learning *what* while the boring static panel covers space well enough to find *where*.
+
+> **Before building an adaptive diagnostic policy, learn the best static measurement cover.**
+
+That does not kill active sensing in general. It says it has not earned architectural complexity in this synthetic workload once a clean current-world delta memory is available.
+
+See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), [`GATE3D.md`](GATE3D.md), and [`GATE3E.md`](GATE3E.md).
 
 ## Connection to the recent repos
 
-`Operaattori` supplied **structure compiles an operator**. `OutoSynapsi` showed that sparse scalar consequences can identify an effective operator family. `AlternativeNeuron` supplied active poking and intervention-conditioned identity. `GeometricNeuronV24` supplied the address-selection lesson. G3D narrows all of that: before inventing a rich “causal address”, subtract the remembered baseline of the current world and see what remains.
+`Operaattori` supplied **structure compiles an operator**. `OutoSynapsi` showed that sparse scalar consequences can identify an effective operator family. `AlternativeNeuron` supplied active poking and intervention-conditioned identity. `GeometricNeuronV24` supplied the address-selection and persistent-memory lessons.
 
-The synthesis currently under test is:
+The current synthesis has become simpler than those metaphors:
 
 ```text
 slow substrate / operator
         ↓
-remembered expected consequences
+medium remembered expectations
         ↓
-cheap residual
+current consequence
         ↓
-where is uncertainty still high?
+Δ = current - expected
         ↓
-paid intervention
+cheap/static measurement cover first
         ↓
-update belief / memory
+only add adaptivity if context changes what is useful
 ```
+
+The strongest piece of machinery after G3E is not the active observer. It is the **remembered baseline of this world**.
 
 ## The next cheat to remove
 
-G3D uses **all 168 post-change scalar measurements**. That is not a bounded observer.
+That baseline is currently perfect and free. The machine effectively owns the healthy consequence of all 168 candidate experiments before the incident.
 
-The next gate should keep the cross-substrate current-world delta representation but restore a severe measurement budget. Compare adaptive selection against strong fixed, coarse-routed, and random delta panels on unseen substrates.
+Gate 3F should therefore make baseline memory costly and stale under slow substrate drift. The real comparison becomes:
 
-If a tiny static delta panel solves the task, active diagnosis loses again. If adaptive selection wins only for exact localization, preserve that narrower boundary rather than inflating it into a general intelligence claim.
+```text
+remeasure the baseline every incident
+        versus
+remember it across incidents and refresh selectively
+```
+
+The metric is total scalar measurements required to maintain diagnosis accuracy over repeated changes. If remembered expectation cannot amortize future sensing, the medium-timescale memory story loses too.
 
 ## Claim boundary
 
-This is not a claim that the brain is “made of eigenmodes”, that geometry dominates connectivity, or that a new universal causal-address mathematics has been discovered. The gates are synthetic and generated from the decompositions they test. Their value is the causal-testing workflow and the repeated removal of unnecessary machinery.
+This is not a claim that the brain is “made of eigenmodes”, that geometry dominates connectivity, that active sensing is generally unnecessary, or that a new universal causal-address mathematics has been discovered. The gates are synthetic and generated from the decompositions they test. Their value is the causal-testing workflow and the repeated removal of machinery that stronger attackers make unnecessary.
 
 **Attackers first, claims second.**
