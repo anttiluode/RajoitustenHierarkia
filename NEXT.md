@@ -1,99 +1,117 @@
-# NEXT — make the hierarchy useful under a hard evidence budget
+# NEXT — make memory pay rent
 
-Gates 0–3D now leave a much cleaner boundary.
+Gates 0–3E now leave a simpler architecture than we started with.
 
-Known factorization transfers efficiently after structural change (G0–G2). Hidden causes can be inferred from consequences, but fixed addresses make adaptivity unnecessary (G3A/G3B). Moving the event restores a modest value for sequential pokes in exact localization (G3C). Changing the entire substrate kills literal coordinate atlases, but a much simpler representation wins: **current-world before/after differencing** (G3D).
+Known factorization transfers efficiently after structural change (G0–G2). Fixed event addresses make adaptivity unnecessary (G3A/G3B). Moving the event gives sequential pokes some value for exact localization (G3C). Changing the substrate kills literal atlases, but current-world baseline differencing transfers almost perfectly with a full panel (G3D). Restoring a hard post-change budget then lets a learned static spatial cover beat two plausible active policies (G3E).
 
-So the next question is not “what is a causal address?” It is:
+So the current strongest primitive is no longer “active causal address.” It is:
 
-> **Given a remembered baseline of this world, which few differences are worth measuring?**
+> **remember what this world normally does, then measure change relative to that expectation.**
 
-## Gate 3E — active delta diagnosis on unseen substrates
+The next gate must make that memory pay for itself.
 
-Keep the G3D world family: training and test use different local transport weights and different directed long-range graphs.
+## Gate 3F — stale baseline / amortized sensing
 
-The machine may remember baseline consequences collected during ordinary life before the change. After the change it gets only a tiny paid budget.
+The current cheat is large: the observer owns a perfect healthy baseline consequence for every candidate experiment at zero cost.
 
-A candidate paid experiment is:
+Replace that with repeated reversible incidents in the same slowly drifting substrate.
+
+At each incident there is a known healthy interval before the fault/change. A diagnostic policy can either spend measurements rebuilding its baseline or reuse remembered expectations from earlier healthy periods.
+
+Compare:
 
 ```text
-(poke address, read time)
-        ↓
-post-change scalar consequence
-        ↓ subtract remembered baseline for same experiment
-Δ consequence
+A. REFRESH EVERY INCIDENT
+   measure the diagnostic baseline panel again
+   then measure post-change panel
+
+B. FROZEN MEMORY
+   measure baseline once at the beginning
+   reuse forever
+
+C. PERIODIC REFRESH
+   reuse memory for R incidents
+   then refresh the panel
+
+D. SENTINEL-TRIGGERED REFRESH
+   spend one cheap healthy sentinel measurement
+   refresh the whole panel only when baseline prediction error is large
 ```
 
-The observer should update a posterior over `cause × changed address` and choose the next experiment by expected separation / information gain.
+Use the strong **G3E greedy static panel** as the diagnostic measurement set. There is no reason to reintroduce adaptive post-change poking until memory itself survives.
 
-### Attackers
+### Slow substrate drift
 
-- random delta probes;
-- one globally learned fixed delta panel;
-- a coarse-residual-routed fixed delta panel;
-- greedy static panel trained across all worlds;
-- active sequential delta observer;
-- full 168-probe delta panel ceiling.
+Between incidents, change the healthy transport/wiring substrate slightly without changing the event class. Drift should be large enough that a permanently frozen baseline eventually becomes wrong, but small enough that refreshing every incident is wasteful.
 
-The fixed panels must be learned only on training substrates. Test worlds are unseen.
+The fault itself remains reversible and local (`geometry`, `wiring`, or `gain`).
+
+This creates the three clocks in a concrete form:
+
+```text
+fast:   incident consequence
+medium: remembered healthy baseline
+slow:   substrate drift
+```
 
 ### Metrics
 
-- joint cause+exact-address accuracy at 1/2/3/4/6 probes;
-- cause-family accuracy separately;
-- exact localization given correct cause;
-- degradation after consistent random node relabeling;
-- full-panel ceiling;
-- number of post-change scalar measurements.
+For a sequence of repeated incidents report:
 
-### Kill condition
+- joint cause+address accuracy;
+- total healthy-baseline scalar calls;
+- total post-change scalar calls;
+- total scalar calls per correct diagnosis;
+- false diagnoses caused by stale memory;
+- refresh count;
+- accuracy as drift accumulates.
 
-If a tiny static delta panel performs as well as adaptive selection on unseen substrates, active measurement has not earned work. Keep the simpler static diagnostic.
+The useful comparison is **accuracy at matched cumulative measurement cost**, not accuracy alone.
 
-If active wins only for localization but not cause-family classification, preserve that narrower result.
+### Kill conditions
 
-If all methods collapse once the full 168-panel is removed, then G3D showed representational invariance but not useful bounded diagnosis.
+If frozen memory stays perfect despite substantial drift, the drift model is too easy and the gate fails.
 
-## Gate 3F — forget the perfect baseline
+If refreshing every incident is required to preserve diagnosis, medium-timescale memory has not amortized anything.
 
-Only if 3E survives, attack the assumption that the machine has a clean full baseline table.
+If a simple periodic schedule beats a surprise-triggered refresh at the same cost, do not claim active memory management.
 
-Make baseline memory sparse, noisy, stale, or locally maintained. Then ask whether medium-timescale memory can reconstruct enough expectation to support cheap diagnosis.
+A positive result only earns the narrow statement:
 
-This is where the three-timescale architecture can finally earn work:
+> **remembered baseline measurements can amortize repeated diagnosis when the substrate changes more slowly than incidents occur.**
+
+That is a systems result, not a claim about biological memory.
+
+## Gate 3G — sparse baseline acquisition
+
+Only if 3F survives, remove another cheat: the first baseline itself should not begin as a complete table.
+
+Let ordinary interaction gradually populate expected consequences. Repeatedly useful measurements should be retained; rarely useful ones may decay or be evicted under a fixed memory budget.
+
+Attack with a simple frequency/LRU cache before inventing learned consolidation.
+
+This is the first place where V24's old statement **“remembering changes future sensing”** could become an engineering result rather than a metaphor: a stored consequence is valuable only if it saves future measurement calls.
+
+## Gate 4 — postpone dynamical islands
+
+Do not return to `SpectralIslandsV2` yet. First determine whether medium-timescale expectation memory actually lowers evidence cost under realistic drift.
+
+If it does, the later architecture becomes:
 
 ```text
-fast:   current pulse / consequence
-medium: remembered local expectation
-slow:   substrate / routing parameters
+slow structure
+    ↓
+expected local consequences
+    ↓
+current residual
+    ↓
+static coverage / selective measurement
+    ↓
+update medium memory
+    ↓ repeated consequence
+possibly alter slow structure
 ```
 
-A strong attacker is a model that simply spends more baseline measurements up front. Memory is only interesting if it amortizes repeated future diagnosis.
+If it does not, prune the memory layer too.
 
-## Gate 4 — dynamical objects only after diagnosis survives
-
-Do not return to `SpectralIslandsV2` yet. First establish that bounded diagnosis works across unseen substrates with a realistic memory/evidence budget.
-
-Only then introduce multiple nonlinear dynamical objects and ask whether their identity survives substrate drift by causal fingerprint rather than frequency label.
-
-## Later: ordering and structural adaptation
-
-If repeated diagnoses identify recurring changes, then test whether medium memory should eventually alter the slow operator. That is where `Operaattori`, `OutoSynapsi`, V24 memory, and the old Geometric Neuron intuition can genuinely converge:
-
-```text
-surprise
-   ↓
-cheap residual
-   ↓
-selective experiment
-   ↓
-what changed + where?
-   ↓
-remember
-   ↓ repeated often enough
-slowly alter routing / structure
-```
-
-But that step should not be built until the evidence-budget gate survives.
-
-**Before inventing a new representation, subtract the baseline. Before inventing an active observer, attack it with a fixed panel.**
+**Before asking memory to think, make it save measurements.**
