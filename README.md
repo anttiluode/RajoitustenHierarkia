@@ -36,44 +36,38 @@ The repository therefore treats **prediction of future dynamics under perturbati
 |---|---|---|
 | **G0 — state-dependent operator** | can a state-conditioned operator be distinguished from a flat geometry+connectivity mixture? | held-out MSE **0.000280** vs flat **0.01165**; on an identical-state counterfactual the flat model predicts zero change while the hierarchy tracks the true change with correlation **>0.999999** |
 | **G1 — propagation layers** | can local geometry, nonlocal wiring, and delay be separated by held-out futures rather than static reconstruction? | joint delayed NMSE **0.00127–0.00142** across base/rewire/warp/delay/combined interventions vs strongest instantaneous attacker **0.0286–0.0357**; two calibration episodes recover changed delay `4→7` |
+| **G2 — generic history attacker** | is the hierarchy merely a verbose VAR with memory? | a 6,360-parameter VAR fits the unchanged world near the noise floor, but with only 2 post-change episodes its NMSE is **10.7×–59.2×** worse than the 5-parameter factorized model; by 16–32 episodes the VAR largely catches up |
 
 CI reruns all executed gates on every PR.
 
-## Gate 0 — state changes the effective operator
+## What the first three gates actually establish
 
-The calibration world is
+Gate 0 calibrates the basic discriminator: when current state changes the effective operator, a state-blind mixture can fit ordinary data yet fail a controlled counterfactual.
 
-```text
-y = tanh(0.72 Gx + 0.48 q C x_prev + 0.35 u + noise)
-```
+Gate 1 adds explicit propagation. The model is fitted once on a base world and then faces rewiring, geometry warp, a changed delay, and all three together. The factorized `G + delayed C` description transfers across those interventions roughly 20–30× better than instantaneous or partial models.
 
-where `G` is local geometry, `C` is directed nonlocal coupling, and `q` changes how strongly the long-range operator is expressed.
-
-The decisive test holds `x`, `x_prev`, `G`, `C`, and input fixed while changing only `q`. The true future changes with RMS magnitude about `0.286`. A state-blind flat model predicts exactly zero counterfactual change; the state-conditioned model reproduces the change with delta MSE around `1.8e-8`.
-
-See [`GATE0.md`](GATE0.md).
-
-## Gate 1 — static similarity is not dynamic equivalence
-
-Gate 1 adds explicit propagation:
+Gate 2 attacks the result with a generic ten-lag VAR. This is the important boundary:
 
 ```text
-x[t+1] = 0.15 x[t]
-       + 0.55 G x[t]
-       + 0.25 C x[t-d]
-       + 0.90 u[t]
-       + noise
+unchanged world:
+    generic VAR is excellent
+
+small post-change budget:
+    factorized model transfers far better
+
+large post-change budget:
+    generic VAR relearns and catches up
 ```
 
-The model is fitted once on a base world with delay `d=4`. It then faces new geometry, rewired long-range edges, a delay changed to `7`, and all three together.
+So the present result is **not** that the hierarchy expresses dynamics a generic history model cannot represent.
 
-The joint delayed model recovers the generating coefficients almost exactly and keeps normalized next-state error near `0.0013–0.0014`. Geometry-only, connectivity-only, an instantaneous `G+C` model, and a broad smooth-local null all remain around `0.029–0.046` under the same held-out interventions.
+It is:
 
-More importantly, the delay is not simply handed back after it changes. Two short calibration episodes recover `4` in the original worlds and `7` after the intervention in every tested condition.
+> **Known constraint factorization buys compositional transfer and data efficiency after structural change.**
 
-> **A controlled change to one constraint layer can separate models that ordinary smooth-state fitting leaves hard to distinguish.**
+That is useful, but it is structured-inductive-bias territory rather than a new theorem.
 
-See [`GATE1.md`](GATE1.md).
+See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), and [`GATE2.md`](GATE2.md).
 
 ## Why this starts from dynamics, not reconstruction
 
@@ -105,7 +99,7 @@ See [`LITERATURE.md`](LITERATURE.md) for the immediate literature anchor.
 
 `SpectralIslandsV2` supplied the intuition that several dynamically maintained mode packets can coexist without everything mixing into everything else, but its older literal holographic/ephaptic claims are not assumed here.
 
-The synthesis tested here is:
+The synthesis being tested is:
 
 ```text
 constraint hierarchy
@@ -117,18 +111,18 @@ selectively maintained dynamical objects
 bounded active observer
 ```
 
-## The next attacker
+## The remaining cheat
 
-Gate 1 still knows the decomposition into `G` and `C`. That is a major convenience.
+The factorized Gate-2 model is handed the changed `G` and `C` after intervention. That is legitimate side information for a mechanistic simulator, but not yet an internal discovery made by a thinking system.
 
-The next gate therefore gives a generic lagged state-space / VAR model enough history and parameters to attack the result. If an operator-agnostic history model transfers across held-out rewiring, geometry warp, and delay changes just as well, the “hierarchy” language has not earned itself.
+The next gate therefore removes those semantic labels. The observer should see trajectories and sparse intervention consequences and infer whether a surprise is best explained by changed local geometry, long-range wiring, delay, local gain/state, or external input.
 
-Only after that attack should this repo proceed to nonlinear selectively maintained dynamical islands and an `AlternativeNeuron`-style bounded observer.
+If that cannot be done more efficiently than generic black-box relearning, then “hierarchy of constraints” remains our description of the world rather than an architectural advantage for the machine.
 
 ## Claim boundary
 
 This is not a claim that the brain is “made of eigenmodes”, that one spectral representation explains cognition, or that geometry dominates connectivity. Geometry, connectivity, delays, local nonlinearities, and input all constrain different parts of the problem.
 
-Both current gates are synthetic and generated from the decompositions they are meant to test. They calibrate the causal assay; they do not establish a biological hierarchy.
+The current gates are synthetic and generated from the decompositions they test. They demonstrate a causal-testing workflow and a data-efficiency benefit when structural factors are known. They do not establish a biological hierarchy.
 
 **Attackers first, claims second.**
