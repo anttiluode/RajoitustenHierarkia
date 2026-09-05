@@ -23,3 +23,5 @@ jobs:
         run: python -m experiments.gate3_blind_layer_attribution
       - name: Gate 3B — learned fixed-panel attacker
         run: python -m experiments.gate3_static_panel_attacker --check
+      - name: Gate 3C — moving-address attribution
+        run: python -m experiments.gate3c_moving_address --check
