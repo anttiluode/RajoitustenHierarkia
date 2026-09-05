@@ -19,5 +19,7 @@ jobs:
         run: python -m experiments.gate1_propagation_layers --check
       - name: Gate 2 — generic VAR history attacker
         run: python -m experiments.gate2_generic_history_attacker --check
-      - name: Gate 3 — blind constraint-layer attribution
-        run: python -m experiments.gate3_blind_layer_attribution --check
+      - name: Gate 3A — blind attribution vs random pokes
+        run: python -m experiments.gate3_blind_layer_attribution
+      - name: Gate 3B — learned fixed-panel attacker
+        run: python -m experiments.gate3_static_panel_attacker --check
