@@ -1,109 +1,119 @@
-# NEXT — make memory earn every slot
+# NEXT — combine stale memory with changing demand
 
-Gates 0–3F have pruned the original story aggressively.
+Gates 0–3G have turned the original “hierarchy of constraints” idea into a much more testable systems problem.
 
-Known factorization helps after structural change (G0–G2). Fixed addresses make adaptivity unnecessary (G3A/G3B). Moving addresses gives sequential measurements some localization value (G3C). Across unseen substrates, a simple current-world baseline delta is enough to remove most substrate variation (G3D). Under a hard evidence budget, a static spatial cover beats two active post-change policies (G3E). Under slow healthy drift, periodically reused baseline memory preserves almost all fresh-calibration accuracy at far lower cumulative measurement cost (G3F), while a one-sentinel trigger loses to the boring schedule.
+Known factorization helps after structural change (G0–G2). Fixed addresses make adaptivity unnecessary (G3A/G3B). Moving addresses gives sequential measurements some localization value (G3C). Across unseen substrates, a current-world baseline delta removes most substrate variation (G3D). Under a hard evidence budget, a learned static spatial cover beats two active post-change policies (G3E). Under slow drift, periodically reused baseline memory preserves almost all fresh-calibration accuracy at much lower cumulative cost (G3F). When useful expectations exceed memory capacity, LRU is already near a future-use oracle and lifetime-frequency retention over-consolidates the old regime (G3G).
 
-So the surviving mechanism is now:
+The surviving mechanism is now:
 
-> **cache expected consequences long enough to amortize measurement, but not so long that substrate drift makes them wrong.**
+> **remember expected consequences when reuse saves future measurement, but refresh or discard them when either the world or demand changes.**
 
-The next gate should attack the fact that the cache currently begins full.
+The next gate should combine the two pressures that 3F and 3G deliberately separated.
 
-## Gate 3G — sparse expectation cache
+## Gate 3H — variable drift + sparse cache
 
-Remove the free initial eight-entry baseline panel.
+Gate 3F changed the world but kept the useful panel fixed. Gate 3G changed demand but kept the world fixed.
 
-The world begins with an empty expectation cache and a fixed memory capacity smaller than the candidate measurement set. Healthy ordinary interaction occasionally exposes `(poke node, read time) -> scalar consequence`. The machine can store some of those expectations for future incidents.
+Now run both at once.
 
-When an incident occurs, a diagnostic panel entry has two possible costs:
+Each held-out world has a sparse expectation cache smaller than the total useful measurement set. Diagnostic contexts switch over time, while the healthy substrate follows a nonstationary drift schedule:
 
 ```text
-cached expectation:
-    pay 1 post-change scalar
-    delta = post - cached baseline
-
-not cached:
-    pay 1 healthy/recovery baseline scalar
-    + 1 post-change scalar
+stable epoch
+    ↓
+rapid drift burst
+    ↓
+new stable epoch
 ```
 
-Repeated use should therefore make some baseline entries worth retaining.
+A cached expectation can therefore fail in two distinct ways:
 
-### Workload
+```text
+still accurate but no longer useful      (demand moved)
+recently useful but now numerically wrong (substrate moved)
+```
 
-Use several diagnostic contexts rather than one permanently fixed panel. For example, draw incident families from a small set of static panels or task regimes so some measurements are frequent, some rare, and the useful set changes over time.
+That distinction matters. Pure recency only sees demand. A fixed refresh clock only sees elapsed time. Neither directly measures prediction error.
 
-The cache capacity must be too small to hold every potentially useful baseline.
+### Policies to compare
 
-Healthy substrate drift remains slow; cached values also carry an age and are periodically invalidated/refreshed using the Gate-3F schedule.
+Use the same diagnosis model and static post-change panels. Compare memory-management policies only:
 
-### Attackers
+- **no cache / fresh baseline** — expensive reference;
+- **LRU + fixed period refresh**;
+- **LRU + short fixed period** — attacker tuned for rapid drift;
+- **LRU + long fixed period** — attacker tuned for stable epochs;
+- **age-only TTL**;
+- **distributed residual refresh** — use several cheap healthy cache checks and refresh entries whose expected consequence becomes inconsistent;
+- **oracle stale-bit / future-use** ceiling.
 
-Before any learned consolidation rule, compare:
+Do not use one sentinel again; Gate 3F already showed that a single scalar is a poor summary of distributed drift.
 
-- **no cache** — reacquire every needed baseline;
-- **LRU** — evict least recently used expectation;
-- **LFU/frequency** — retain most frequently reused entries;
-- **value cache** — retain entries with highest measured saved-call utility;
-- **random eviction**;
-- **oracle future-use cache** as a ceiling.
+### A fair adaptive trigger
 
-Do not call the value cache “learning” unless it actually estimates future utility beyond simple counts.
+A candidate distributed trigger may sample `k` cached expectations during healthy intervals and compute residuals:
+
+```text
+r_i = observed healthy consequence_i - cached expectation_i
+```
+
+The trigger must not know the drift phase. It may refresh only when the sampled residual distribution exceeds a threshold learned on training worlds.
+
+The trigger's own scalar checks count toward total evidence cost.
 
 ### Metrics
 
-- joint diagnosis accuracy;
-- total scalar measurement calls;
-- baseline calls avoided by cache hits;
-- cache hit rate;
+Report:
+
+- joint cause+exact-address accuracy;
+- total baseline/cache-check/post-change scalar calls;
 - calls per correct diagnosis;
 - stale-cache error rate;
-- regret versus oracle cache;
-- adaptation after the task-regime frequencies switch.
+- cache hit rate;
+- refresh count;
+- performance separately in stable / burst / post-burst epochs;
+- regret versus the best fixed policy chosen in hindsight;
+- regret versus oracle stale/future knowledge.
 
 ### Kill conditions
 
-If LRU or LFU is essentially oracle, there is no reason for a learned consolidation mechanism.
+If one fixed refresh period is essentially optimal across the whole schedule, adaptive refresh still has not earned work.
 
-If cache hits do not reduce total measurements because stale refresh costs cancel the savings, persistent expectation memory loses its practical role.
+If residual checks cost as much as the saved refreshes, adaptive management has no practical value.
 
-If a cache only helps because the workload repeats an exactly fixed panel, the workload is too easy; the useful measurement distribution must shift at least once.
+If LRU plus a simple TTL is near oracle, stop there.
 
 A positive result earns only:
 
-> **retaining frequently reusable expected consequences can reduce future diagnostic measurement cost under a fixed memory budget.**
+> **distributed prediction error can decide when cached expectations have become stale under nonstationary drift, reducing evidence cost relative to any single fixed refresh timescale.**
 
-That is caching, not a new theory of memory.
+That would be the first gate where “surprise controls memory maintenance” survives a strong boring attacker.
 
-## Gate 3H — variable drift, only if 3G survives
+## Gate 3I — only if 3H survives: utility-weighted cache
 
-Gate 3F's period-4 refresh wins partly because the drift timescale is stationary.
-
-After sparse caching works, vary the slow timescale itself:
+If adaptive staleness detection is useful, then combine it with demand value. Each cache entry would have two quantities:
 
 ```text
-long stable epoch
-→ rapid drift episode
-→ new stable epoch
+validity:  is this expectation still true?
+utility:   is this expectation likely to save future calls?
 ```
 
-Now compare fixed-period refresh against multi-sentinel residual statistics or distributed cache-consistency signals.
+Attack any learned utility rule with LRU, LFU-with-decay, and simple exponential recency-frequency scores first.
 
-Only here does an adaptive refresh policy get a fair workload. A single sentinel already failed in G3F; any richer trigger must beat the best fixed schedule at matched cumulative cost.
+Only if those fail should a learned retention policy be introduced.
 
-## Later — slow structural adaptation
+## Later — compile repeated evidence into slow structure
 
-Do not alter the substrate yet.
+Do not alter routing yet.
 
-Only after the system can cheaply maintain useful expectations should repeated diagnostic consequences be allowed to change the slow operator itself. Then the three timescales would have earned separate engineering roles:
+The architecture should earn three distinct clocks before slow structural adaptation is introduced:
 
 ```text
 fast      current incident / pulse
-medium    expectation cache / calibration memory
-slow      routing or structural operator
+medium    cached expected consequences + validity
+slow      substrate / routing operator
 ```
 
-At that point the question becomes whether repeated medium-timescale evidence should be compiled into slower structure. Until then, structure learning is premature.
+If repeated medium-timescale evidence reliably predicts a persistent change in the slow world, then ask whether changing the operator reduces future diagnostic or control cost. That is where `Operaattori`, `OutoSynapsi`, V24 write-timescale work, and the old Geometric Neuron intuition can finally meet without metaphor doing the work.
 
-**Memory is now a cache. Make the cache beat no-cache before asking it to become a brain.**
+**First make surprise beat a clock. Then let surprise change structure.**
