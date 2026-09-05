@@ -1,58 +1,60 @@
 # NEXT — make the hierarchy internal rather than supplied
 
-Gates 0–2 have reached a useful boundary.
+Gates 0–3B have reached the next useful boundary.
 
-A factorized description transfers efficiently after structural intervention **when the changed operators are supplied**. A generic lagged state-space model can represent the same linear dynamics, but needs substantially more post-change data to relearn them.
+Known factorization transfers efficiently after structural change (G0–G2). Hidden constraint families are behaviorally distinguishable from scalar intervention consequences (G3A). But on a fixed substrate with fixed perturbation sites, a learned static diagnostic panel solves the attribution problem even more cheaply than the adaptive observer (G3B).
 
-The next question is therefore no longer whether factorization helps. It is whether a bounded system can **discover the factorization from consequences**.
+So the next question is not “can we classify the causes?” It is:
 
-## Gate 3 — blind constraint-layer attribution
+> **Does active addressing become useful when the cause can move?**
 
-Hide the semantic labels `G`, `C`, `delay`, and `gain` from the observer.
+## Gate 3C — moving-address layer attribution
 
-Construct worlds where exactly one layer changes:
+Randomize the address of local geometry, wiring, and gain changes on every episode.
 
-```text
-A. local geometry changes
-B. long-range wiring changes
-C. propagation delay changes
-D. local gain / adaptation changes
-E. external input statistics change
-F. nothing structural changes
-```
+Keep global delay/input/no-change causes as controls.
 
 The observer receives:
 
-- ordinary state observations through a bounded readout;
-- a cheap residual / prediction-error signal;
-- a small budget of reversible addressed pokes;
-- a scalar global consequence.
+- a cheap coarse residual map with far fewer bins than physical nodes;
+- the remembered baseline consequence model;
+- a small budget of addressed scalar pokes;
+- no direct access to `G`, `C`, delay, gain, or the true changed address.
 
-It must choose experiments and infer which latent constraint family changed.
+The hidden hypothesis should now include both **cause family** and **where the event lives**.
+
+The active policy should use cheap evidence to narrow location, then choose a poke/read-time pair that best separates the remaining cause hypotheses.
 
 ### Attackers
 
-- generic VAR change detector;
-- full-state linear system identification;
-- random interventions;
-- passive observation only;
-- oracle with layer labels;
-- active factorized observer.
+- passive coarse residual only;
+- random addressed pokes;
+- the Gate-3B learned fixed diagnostic panel;
+- a stronger greedy fixed panel trained across all possible event locations;
+- full 192-poke panel;
+- active cause+location observer.
 
-### Metrics
+### Headline metrics
 
-- layer-attribution accuracy;
-- number of paid interventions;
-- post-change prediction NMSE;
-- recovery/calibration samples;
+- cause-family accuracy at 1/2/3/4 paid pokes;
+- localization accuracy for local causes;
+- fixed-panel vs active accuracy at equal poke budget;
 - false structural-change alarms;
-- transfer to an unseen combination of two changed layers.
+- full-panel ceiling.
 
 ### Kill condition
 
-If a generic change detector or black-box system identifier reaches the same attribution/prediction performance at the same evidence budget, then the hierarchy has not become an architectural advantage.
+If a small fixed panel remains as good as the active observer once event address is randomized, active addressing has still not earned architectural work.
 
-This gate is where `OutoSynapsi` and `AlternativeNeuron` should re-enter: scalar consequences and active interventions are now used to identify **which operator family changed**, not merely the hidden state inside a known world.
+If active wins only because the cheap residual directly reveals the exact changed node, the gate also fails: the coarse readout must leave genuine address ambiguity.
+
+## Gate 3D — unseen substrates
+
+Only after moving-address attribution works, randomize the underlying geometry/connectivity topology across worlds.
+
+Training should see many substrates; test should use held-out substrates. A useful representation should transfer **relative causal signatures** rather than memorizing literal node IDs.
+
+Attackers include a generic black-box classifier trained on the same worlds and a full-state system identifier with a matched calibration budget.
 
 ## Gate 4 — selectively maintained dynamical islands
 
@@ -101,7 +103,7 @@ cheap residual
     ↓
 active experiment
     ↓
-which constraint changed?
+which constraint changed, and where?
     ↓
 update medium model
     ↓
@@ -110,6 +112,6 @@ repeat enough times
 slowly alter routing / structure
 ```
 
-At that point the repo would no longer merely model a hierarchy of constraints. The machine would use that hierarchy to decide **what to measure, what changed, and what deserves structural adaptation**.
+At that point the repo would no longer merely model a hierarchy of constraints. The machine would use that hierarchy to decide **what to measure, what changed, where it changed, and what deserves structural adaptation**.
 
-**First make the factors discoverable. Then make them useful.**
+**First make the factors discoverable. Then make their addresses move.**
