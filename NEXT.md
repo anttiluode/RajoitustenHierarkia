@@ -1,64 +1,79 @@
 # NEXT — make the hierarchy internal rather than supplied
 
-Gates 0–3B have reached the next useful boundary.
+Gates 0–3C have reached a sharper boundary.
 
-Known factorization transfers efficiently after structural change (G0–G2). Hidden constraint families are behaviorally distinguishable from scalar intervention consequences (G3A). But on a fixed substrate with fixed perturbation sites, a learned static diagnostic panel solves the attribution problem even more cheaply than the adaptive observer (G3B).
+Known factorization transfers efficiently after structural change (G0–G2). Hidden cause families are behaviorally distinguishable from scalar intervention consequences (G3A). Fixed addresses let a static diagnostic panel destroy the need for adaptivity (G3B). Moving the event across all 24 nodes restores a modest but real value for sequential paid outcomes in **exact localization**, while coarse cause-family classification remains mostly cheap/fixed (G3C).
 
-So the next question is not “can we classify the causes?” It is:
+So the next question is no longer “does address matter?” It is:
 
-> **Does active addressing become useful when the cause can move?**
-
-## Gate 3C — moving-address layer attribution
-
-Randomize the address of local geometry, wiring, and gain changes on every episode.
-
-Keep global delay/input/no-change causes as controls.
-
-The observer receives:
-
-- a cheap coarse residual map with far fewer bins than physical nodes;
-- the remembered baseline consequence model;
-- a small budget of addressed scalar pokes;
-- no direct access to `G`, `C`, delay, gain, or the true changed address.
-
-The hidden hypothesis should now include both **cause family** and **where the event lives**.
-
-The active policy should use cheap evidence to narrow location, then choose a poke/read-time pair that best separates the remaining cause hypotheses.
-
-### Attackers
-
-- passive coarse residual only;
-- random addressed pokes;
-- the Gate-3B learned fixed diagnostic panel;
-- a stronger greedy fixed panel trained across all possible event locations;
-- full 192-poke panel;
-- active cause+location observer.
-
-### Headline metrics
-
-- cause-family accuracy at 1/2/3/4 paid pokes;
-- localization accuracy for local causes;
-- fixed-panel vs active accuracy at equal poke budget;
-- false structural-change alarms;
-- full-panel ceiling.
-
-### Kill condition
-
-If a small fixed panel remains as good as the active observer once event address is randomized, active addressing has still not earned architectural work.
-
-If active wins only because the cheap residual directly reveals the exact changed node, the gate also fails: the coarse readout must leave genuine address ambiguity.
+> **Does the address survive when the substrate itself changes?**
 
 ## Gate 3D — unseen substrates
 
-Only after moving-address attribution works, randomize the underlying geometry/connectivity topology across worlds.
+Randomize the underlying local geometry and long-range directed topology across worlds.
 
-Training should see many substrates; test should use held-out substrates. A useful representation should transfer **relative causal signatures** rather than memorizing literal node IDs.
+Training sees many worlds. Test uses held-out worlds generated from the same family but with different literal node neighborhoods and different long-range edges.
 
-Attackers include a generic black-box classifier trained on the same worlds and a full-state system identifier with a matched calibration budget.
+The crucial rule:
+
+```text
+literal node IDs are not a transferable semantic label.
+```
+
+The machine may know the baseline behavior of the CURRENT world before a fault/change, but it may not use a global atlas learned on another world to say “node 7 always means this.”
+
+### Two representations to compare
+
+**Coordinate atlas**
+
+Learn cause/address signatures tied directly to node IDs, as in G3C. This should fail when node identities no longer imply the same causal neighborhood.
+
+**Relative causal address**
+
+Describe a candidate location by local behavioral relations measured in the current baseline world, for example:
+
+```text
+local return profile after a tiny poke
+outgoing consequence latency
+neighbor-vs-nonneighbor response ratio
+short-horizon controllability fingerprint
+coarse residual neighborhood
+```
+
+Then characterize the *change* relative to that local baseline fingerprint.
+
+This is the point where the AlternativeNeuron notion of an address as an intervention-conditioned equivalence class can become concrete.
+
+### Attackers
+
+- literal coordinate/codebook classifier;
+- generic black-box classifier given the same training worlds;
+- full-state system identifier with matched post-change calibration budget;
+- random probes;
+- coarse-residual-only diagnosis;
+- oracle that is given the current world operators;
+- relative-causal-address observer.
+
+### Metrics
+
+- cause-family accuracy on unseen substrates;
+- exact changed-node localization;
+- joint cause+location accuracy;
+- paid probes needed;
+- degradation from seen to unseen substrates;
+- performance after a random relabeling of node coordinates.
+
+The **random relabeling control is mandatory**. If a method claims to use relative causal addresses but collapses when every node label is permuted consistently inside a world, it was still using coordinates.
+
+### Kill conditions
+
+If the relative-address method does not transfer better than a literal codebook or generic classifier at matched evidence budget, then “causal address” is still our explanatory language rather than a useful machine representation.
+
+If merely supplying the current baseline operator makes the task trivial, report that and separate **model access** from **active discovery** rather than hiding it.
 
 ## Gate 4 — selectively maintained dynamical islands
 
-Only after Gate 3 should the repository return to `SpectralIslandsV2`.
+Only after substrate-relative addressing should the repository return to `SpectralIslandsV2`.
 
 Introduce several nonlinear dynamical objects with overlapping spectra. An island earns identity only if it remains recognizable across substrate drift by a multi-coordinate causal fingerprint:
 
@@ -103,7 +118,7 @@ cheap residual
     ↓
 active experiment
     ↓
-which constraint changed, and where?
+which constraint changed, and where relative to this substrate?
     ↓
 update medium model
     ↓
@@ -114,4 +129,4 @@ slowly alter routing / structure
 
 At that point the repo would no longer merely model a hierarchy of constraints. The machine would use that hierarchy to decide **what to measure, what changed, where it changed, and what deserves structural adaptation**.
 
-**First make the factors discoverable. Then make their addresses move.**
+**Coordinates are cheap. Relative causal identity is the next test.**
