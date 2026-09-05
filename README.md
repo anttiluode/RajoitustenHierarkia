@@ -40,6 +40,7 @@ Static reconstruction is treated as a weak mechanistic test. The primary assay i
 | **G3C — moving address** | what if local changes can occur at any of 24 nodes? | at 3 pokes, cause label active=fixed **83.61%**, but joint cause+exact-address is active **66.39%** vs coarse-bin fixed **59.44%**, global fixed **57.22%**, random **49.17%** |
 | **G3D — unseen substrates** | does an invariant “causal address” survive different transport/wiring worlds? | with the full 168-measurement panel, absolute literal atlas collapses to **5.00%** joint accuracy, but simple current-world `after-before` delta reaches **99.17%** with a shared template and **98.33%** after random coordinate relabeling |
 | **G3E — hard delta budget** | once current-world deltas transfer, do we need adaptive measurement selection? | **not yet**: at 8 post-change scalars greedy static reaches **72.50%** joint cause+address vs active-joint **62.22%**, active-address **53.06%**, random **50.83%**; full 168-panel = **100%** |
+| **G3F — stale baseline memory** | does remembered baseline evidence actually save measurements under slow substrate drift? | **yes, narrowly**: refresh-every gives **71.67%** at 16 calls/incident; periodic-4 gives **70.56%** at **10 calls/incident**; frozen decays to **52.78%**; one-sentinel refresh gets only **57.22%** at 9.94 calls/incident |
 
 CI reruns every executed gate/attacker on every PR.
 
@@ -51,70 +52,54 @@ G3 asks whether the factors can be discovered rather than handed to the model. G
 
 G3C moves the hidden event. That separates “what happened?” from “where did it happen?” Coarse cause-family diagnosis remains mostly cheap/fixed, but sequential paid outcomes improve exact localization.
 
-G3D then changes the entire substrate across worlds. The coordinate atlas fails exactly as it should, but the anticipated fancy replacement also loses its claim to necessity. Remembering the current world's baseline and subtracting it almost solves the full-panel task:
+G3D changes the substrate across worlds. The coordinate atlas fails, but a much simpler representation wins: remember what the current world normally does and subtract it. Shared `after-before` delta templates reach **99.17%** joint accuracy with the full panel, and random coordinate relabeling barely matters.
 
-```text
-what this world normally does
-        ↓
-what it does now
-        ↓
-Δ consequence = now - baseline
-        ↓
-shared change signature
-```
-
-On 30 unseen substrates / 360 events, shared delta templates reach **99.17%** joint cause+address accuracy. Consistent random node relabeling barely matters (**98.33%**). Extra normalization is slightly worse.
-
-> **For this assay, the invariant address is not a new ontology. It is a change relative to the current world's remembered behavior.**
-
-G3E then restores the severe post-change budget. Two adaptive policies are attacked by a learned static panel trained only on the 30 training substrates. At four probes there is essentially no active advantage. At six probes static and active-joint are tied (**52.22%** vs **51.67%** joint). At eight probes the static panel wins clearly: **72.50%** vs **62.22%** active-joint, **53.06%** active-address, and **50.83%** random.
-
-The failure is informative. At eight probes active-joint actually has the best **cause-family** accuracy (**94.17%** vs static **90.28%**) but worse exact address coverage (**62.22%** vs **73.89%**). Generic information-separation spends evidence learning *what* while the boring static panel covers space well enough to find *where*.
+G3E restores a severe post-change budget and attacks the active observer. A learned static eight-probe cover beats two plausible adaptive policies. At eight measurements: static **72.50%**, active-joint **62.22%**, active-address **53.06%**, random **50.83%**. The active-joint policy actually identifies the cause family well but under-covers physical space.
 
 > **Before building an adaptive diagnostic policy, learn the best static measurement cover.**
 
-That does not kill active sensing in general. It says it has not earned architectural complexity in this synthetic workload once a clean current-world delta memory is available.
+G3F then makes the remembered baseline costly and stale. Thirty held-out substrates undergo 12 reversible incidents while their healthy operator drifts slowly. Reacquiring the eight healthy baseline measurements every incident costs 16 total scalar calls/incident and gives **71.67%** joint diagnosis. Refreshing the stored baseline only every four incidents gives **70.56%** at **10 calls/incident** — **98.45% of the reference accuracy with 37.5% fewer total calls**.
 
-See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), [`GATE3D.md`](GATE3D.md), and [`GATE3E.md`](GATE3E.md).
+Frozen memory is not enough: it falls to **52.78%** overall and reaches only **20%** accuracy by incident 10. Memory therefore earns a narrow role because its timescale sits between fast incidents and slower substrate drift.
+
+The active-looking sentinel attacker loses too. One healthy sentinel scalar per incident plus triggered full refresh costs **9.94 calls/incident**, almost identical to periodic refresh, but reaches only **57.22%**. Distributed drift is not summarized well by one sentinel.
+
+> **For this assay, memory pays rent; active memory management does not.**
+
+The surviving architecture is becoming simpler:
+
+```text
+slow substrate drift
+        ↓
+medium remembered expected consequences
+        ↓
+fast incident consequence
+        ↓
+Δ = current - expected
+        ↓
+small static measurement cover
+        ↓
+periodic recalibration when the slow timescale demands it
+```
+
+See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), [`GATE3C.md`](GATE3C.md), [`GATE3D.md`](GATE3D.md), [`GATE3E.md`](GATE3E.md), and [`GATE3F.md`](GATE3F.md).
 
 ## Connection to the recent repos
 
 `Operaattori` supplied **structure compiles an operator**. `OutoSynapsi` showed that sparse scalar consequences can identify an effective operator family. `AlternativeNeuron` supplied active poking and intervention-conditioned identity. `GeometricNeuronV24` supplied the address-selection and persistent-memory lessons.
 
-The current synthesis has become simpler than those metaphors:
-
-```text
-slow substrate / operator
-        ↓
-medium remembered expectations
-        ↓
-current consequence
-        ↓
-Δ = current - expected
-        ↓
-cheap/static measurement cover first
-        ↓
-only add adaptivity if context changes what is useful
-```
-
-The strongest piece of machinery after G3E is not the active observer. It is the **remembered baseline of this world**.
+The strongest surviving piece from that family is now quite concrete: **medium-timescale expected consequences amortize repeated measurement of a slower-changing substrate**. That is much closer to calibration/cache/system-identification language than to a new neuron theory.
 
 ## The next cheat to remove
 
-That baseline is currently perfect and free. The machine effectively owns the healthy consequence of all 168 candidate experiments before the incident.
+Gate 3F still begins with the complete eight-entry healthy baseline panel already populated, and the drift timescale is stationary enough that a fixed period-4 refresh works.
 
-Gate 3F should therefore make baseline memory costly and stale under slow substrate drift. The real comparison becomes:
+Gate 3G should remove the free initial memory. Let ordinary healthy interactions populate a limited cache of expected consequences. Compare simple LRU/frequency/value retention before any learned consolidation rule. A stored expectation earns its slot only when it saves future measurements.
 
-```text
-remeasure the baseline every incident
-        versus
-remember it across incidents and refresh selectively
-```
-
-The metric is total scalar measurements required to maintain diagnosis accuracy over repeated changes. If remembered expectation cannot amortize future sensing, the medium-timescale memory story loses too.
+After that, vary the drift regime so a fixed refresh period becomes wrong. Only then is there a fair reason to revisit adaptive refresh.
 
 ## Claim boundary
 
-This is not a claim that the brain is “made of eigenmodes”, that geometry dominates connectivity, that active sensing is generally unnecessary, or that a new universal causal-address mathematics has been discovered. The gates are synthetic and generated from the decompositions they test. Their value is the causal-testing workflow and the repeated removal of machinery that stronger attackers make unnecessary.
+This is not a claim that the brain is “made of eigenmodes”, that geometry dominates connectivity, that active sensing is generally unnecessary, or that periodic refresh is a universal memory law. The gates are synthetic and generated from the decompositions they test. Their value is the causal-testing workflow and the repeated removal of machinery that stronger attackers make unnecessary.
 
 **Attackers first, claims second.**

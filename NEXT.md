@@ -1,117 +1,109 @@
-# NEXT — make memory pay rent
+# NEXT — make memory earn every slot
 
-Gates 0–3E now leave a simpler architecture than we started with.
+Gates 0–3F have pruned the original story aggressively.
 
-Known factorization transfers efficiently after structural change (G0–G2). Fixed event addresses make adaptivity unnecessary (G3A/G3B). Moving the event gives sequential pokes some value for exact localization (G3C). Changing the substrate kills literal atlases, but current-world baseline differencing transfers almost perfectly with a full panel (G3D). Restoring a hard post-change budget then lets a learned static spatial cover beat two plausible active policies (G3E).
+Known factorization helps after structural change (G0–G2). Fixed addresses make adaptivity unnecessary (G3A/G3B). Moving addresses gives sequential measurements some localization value (G3C). Across unseen substrates, a simple current-world baseline delta is enough to remove most substrate variation (G3D). Under a hard evidence budget, a static spatial cover beats two active post-change policies (G3E). Under slow healthy drift, periodically reused baseline memory preserves almost all fresh-calibration accuracy at far lower cumulative measurement cost (G3F), while a one-sentinel trigger loses to the boring schedule.
 
-So the current strongest primitive is no longer “active causal address.” It is:
+So the surviving mechanism is now:
 
-> **remember what this world normally does, then measure change relative to that expectation.**
+> **cache expected consequences long enough to amortize measurement, but not so long that substrate drift makes them wrong.**
 
-The next gate must make that memory pay for itself.
+The next gate should attack the fact that the cache currently begins full.
 
-## Gate 3F — stale baseline / amortized sensing
+## Gate 3G — sparse expectation cache
 
-The current cheat is large: the observer owns a perfect healthy baseline consequence for every candidate experiment at zero cost.
+Remove the free initial eight-entry baseline panel.
 
-Replace that with repeated reversible incidents in the same slowly drifting substrate.
+The world begins with an empty expectation cache and a fixed memory capacity smaller than the candidate measurement set. Healthy ordinary interaction occasionally exposes `(poke node, read time) -> scalar consequence`. The machine can store some of those expectations for future incidents.
 
-At each incident there is a known healthy interval before the fault/change. A diagnostic policy can either spend measurements rebuilding its baseline or reuse remembered expectations from earlier healthy periods.
-
-Compare:
+When an incident occurs, a diagnostic panel entry has two possible costs:
 
 ```text
-A. REFRESH EVERY INCIDENT
-   measure the diagnostic baseline panel again
-   then measure post-change panel
+cached expectation:
+    pay 1 post-change scalar
+    delta = post - cached baseline
 
-B. FROZEN MEMORY
-   measure baseline once at the beginning
-   reuse forever
-
-C. PERIODIC REFRESH
-   reuse memory for R incidents
-   then refresh the panel
-
-D. SENTINEL-TRIGGERED REFRESH
-   spend one cheap healthy sentinel measurement
-   refresh the whole panel only when baseline prediction error is large
+not cached:
+    pay 1 healthy/recovery baseline scalar
+    + 1 post-change scalar
 ```
 
-Use the strong **G3E greedy static panel** as the diagnostic measurement set. There is no reason to reintroduce adaptive post-change poking until memory itself survives.
+Repeated use should therefore make some baseline entries worth retaining.
 
-### Slow substrate drift
+### Workload
 
-Between incidents, change the healthy transport/wiring substrate slightly without changing the event class. Drift should be large enough that a permanently frozen baseline eventually becomes wrong, but small enough that refreshing every incident is wasteful.
+Use several diagnostic contexts rather than one permanently fixed panel. For example, draw incident families from a small set of static panels or task regimes so some measurements are frequent, some rare, and the useful set changes over time.
 
-The fault itself remains reversible and local (`geometry`, `wiring`, or `gain`).
+The cache capacity must be too small to hold every potentially useful baseline.
 
-This creates the three clocks in a concrete form:
+Healthy substrate drift remains slow; cached values also carry an age and are periodically invalidated/refreshed using the Gate-3F schedule.
 
-```text
-fast:   incident consequence
-medium: remembered healthy baseline
-slow:   substrate drift
-```
+### Attackers
+
+Before any learned consolidation rule, compare:
+
+- **no cache** — reacquire every needed baseline;
+- **LRU** — evict least recently used expectation;
+- **LFU/frequency** — retain most frequently reused entries;
+- **value cache** — retain entries with highest measured saved-call utility;
+- **random eviction**;
+- **oracle future-use cache** as a ceiling.
+
+Do not call the value cache “learning” unless it actually estimates future utility beyond simple counts.
 
 ### Metrics
 
-For a sequence of repeated incidents report:
-
-- joint cause+address accuracy;
-- total healthy-baseline scalar calls;
-- total post-change scalar calls;
-- total scalar calls per correct diagnosis;
-- false diagnoses caused by stale memory;
-- refresh count;
-- accuracy as drift accumulates.
-
-The useful comparison is **accuracy at matched cumulative measurement cost**, not accuracy alone.
+- joint diagnosis accuracy;
+- total scalar measurement calls;
+- baseline calls avoided by cache hits;
+- cache hit rate;
+- calls per correct diagnosis;
+- stale-cache error rate;
+- regret versus oracle cache;
+- adaptation after the task-regime frequencies switch.
 
 ### Kill conditions
 
-If frozen memory stays perfect despite substantial drift, the drift model is too easy and the gate fails.
+If LRU or LFU is essentially oracle, there is no reason for a learned consolidation mechanism.
 
-If refreshing every incident is required to preserve diagnosis, medium-timescale memory has not amortized anything.
+If cache hits do not reduce total measurements because stale refresh costs cancel the savings, persistent expectation memory loses its practical role.
 
-If a simple periodic schedule beats a surprise-triggered refresh at the same cost, do not claim active memory management.
+If a cache only helps because the workload repeats an exactly fixed panel, the workload is too easy; the useful measurement distribution must shift at least once.
 
-A positive result only earns the narrow statement:
+A positive result earns only:
 
-> **remembered baseline measurements can amortize repeated diagnosis when the substrate changes more slowly than incidents occur.**
+> **retaining frequently reusable expected consequences can reduce future diagnostic measurement cost under a fixed memory budget.**
 
-That is a systems result, not a claim about biological memory.
+That is caching, not a new theory of memory.
 
-## Gate 3G — sparse baseline acquisition
+## Gate 3H — variable drift, only if 3G survives
 
-Only if 3F survives, remove another cheat: the first baseline itself should not begin as a complete table.
+Gate 3F's period-4 refresh wins partly because the drift timescale is stationary.
 
-Let ordinary interaction gradually populate expected consequences. Repeatedly useful measurements should be retained; rarely useful ones may decay or be evicted under a fixed memory budget.
-
-Attack with a simple frequency/LRU cache before inventing learned consolidation.
-
-This is the first place where V24's old statement **“remembering changes future sensing”** could become an engineering result rather than a metaphor: a stored consequence is valuable only if it saves future measurement calls.
-
-## Gate 4 — postpone dynamical islands
-
-Do not return to `SpectralIslandsV2` yet. First determine whether medium-timescale expectation memory actually lowers evidence cost under realistic drift.
-
-If it does, the later architecture becomes:
+After sparse caching works, vary the slow timescale itself:
 
 ```text
-slow structure
-    ↓
-expected local consequences
-    ↓
-current residual
-    ↓
-static coverage / selective measurement
-    ↓
-update medium memory
-    ↓ repeated consequence
-possibly alter slow structure
+long stable epoch
+→ rapid drift episode
+→ new stable epoch
 ```
 
-If it does not, prune the memory layer too.
+Now compare fixed-period refresh against multi-sentinel residual statistics or distributed cache-consistency signals.
 
-**Before asking memory to think, make it save measurements.**
+Only here does an adaptive refresh policy get a fair workload. A single sentinel already failed in G3F; any richer trigger must beat the best fixed schedule at matched cumulative cost.
+
+## Later — slow structural adaptation
+
+Do not alter the substrate yet.
+
+Only after the system can cheaply maintain useful expectations should repeated diagnostic consequences be allowed to change the slow operator itself. Then the three timescales would have earned separate engineering roles:
+
+```text
+fast      current incident / pulse
+medium    expectation cache / calibration memory
+slow      routing or structural operator
+```
+
+At that point the question becomes whether repeated medium-timescale evidence should be compiled into slower structure. Until then, structure learning is premature.
+
+**Memory is now a cache. Make the cache beat no-cache before asking it to become a brain.**

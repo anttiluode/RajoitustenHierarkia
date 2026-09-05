@@ -29,3 +29,5 @@ jobs:
         run: python -m experiments.gate3d_unseen_substrates --check
       - name: Gate 3E — hard-budget delta diagnosis
         run: python -m experiments.gate3e_active_delta_budget --check
+      - name: Gate 3F — stale-baseline memory
+        run: python -m experiments.gate3f_baseline_memory --check
