@@ -17,3 +17,5 @@ jobs:
         run: python -m experiments.gate0_state_dependent_operator --check
       - name: Gate 1 — geometry / wiring / delay propagation
         run: python -m experiments.gate1_propagation_layers --check
+      - name: Gate 2 — generic VAR history attacker
+        run: python -m experiments.gate2_generic_history_attacker --check
