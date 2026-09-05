@@ -25,3 +25,5 @@ jobs:
         run: python -m experiments.gate3_static_panel_attacker --check
       - name: Gate 3C — moving-address attribution
         run: python -m experiments.gate3c_moving_address --check
+      - name: Gate 3D — unseen-substrate representation audit
+        run: python -m experiments.gate3d_unseen_substrates --check
