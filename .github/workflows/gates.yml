@@ -33,3 +33,5 @@ jobs:
         run: python -m experiments.gate3f_baseline_memory --check
       - name: Gate 3G — sparse expectation cache
         run: python -m experiments.gate3g_expectation_cache --check
+      - name: Gate 3H — variable-drift cache
+        run: python -m experiments.gate3h_variable_drift_cache --check
