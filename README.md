@@ -39,6 +39,7 @@ The repository treats **prediction of future dynamics under perturbation** as th
 | **G2 — generic history attacker** | is the hierarchy merely a verbose VAR with memory? | a 6,360-parameter VAR fits the unchanged world near the noise floor, but with only 2 post-change episodes its NMSE is **10.7×–59.2×** worse than the 5-parameter factorized model; by 16–32 episodes the VAR largely catches up |
 | **G3A — blind layer attribution** | can constraint families be inferred from bounded scalar consequences without seeing the hidden operators? | passive evidence **42.22%**; 3 active pokes **100%** vs random-poke **72.78%** across six causes |
 | **G3B — fixed-panel attacker** | does that establish a need for adaptive poking? | **no**: one learned fixed poke gives **98.33%**, two fixed pokes **100%**. Fixed perturbation addresses made G3A too easy |
+| **G3C — moving address** | what happens when local structural/input changes can occur at any of 24 nodes? | cause label at 3 pokes: active **83.61%**, global fixed **83.61%**; but joint cause+exact-address: active **66.39%** vs global fixed **57.22%**, coarse-bin fixed **59.44%**, random **49.17%** |
 
 CI reruns every executed gate/attacker on every PR.
 
@@ -65,15 +66,33 @@ So the result is not that the hierarchy represents dynamics that generic history
 
 > **Known constraint factorization buys compositional transfer and data efficiency after structural change.**
 
-Gate 3 then removes direct access to those operators. A bounded observer sees four cheap passive residual summaries and may buy scalar addressed experiments. Six hidden causes are used: none, local geometry, long-range wiring, delay, gain, and external-input statistics.
-
-Three adaptively chosen pokes classify all six causes perfectly in the fixed-substrate assay, while three random pokes reach only 72.78%. But that is **not the headline**. A stronger boring attacker learns a fixed diagnostic panel from the training set. One fixed probe reaches 98.33%; two reach 100%.
-
-So G3A does establish that the cause families have distinct behavioral fingerprints, but G3B kills the claim that adaptive measurement is necessary when structural changes always occur at the same addresses.
+Gate 3 removes direct access to the hidden operators. G3A initially looked strong: three adaptively chosen scalar pokes classified all six cause families perfectly. G3B then supplied the necessary embarrassment: because each cause always lived at the same address, one learned fixed probe reached 98.33% and two reached 100%.
 
 > **If two static probes solve the world, do not build an active observer. Move the world.**
 
-See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), and [`GATE3.md`](GATE3.md).
+G3C therefore lets local geometry, wiring, gain, and hidden-input changes occur at any of 24 nodes. The free channel is only a six-bin residual map, four physical nodes per bin. A paid experiment is `(poke node, read time) -> one scalar global consequence error`.
+
+The strongest static attacker is also allowed to inspect the free residual map and choose one of six pre-learned diagnostic panels before probing. It cannot change that sequence after seeing a paid answer.
+
+The result separates two claims that were previously blurred:
+
+```text
+Which TYPE of change happened?
+    cheap residual + fixed probes are already strong.
+
+Which type happened AND WHERE exactly?
+    sequential outcomes help choose the next address.
+```
+
+At three paid pokes, cause-family accuracy is **83.61% for both active and globally fixed**. So there is no adaptive cause-label victory to advertise. But exact joint cause+address recovery is **66.39% active**, versus **59.44% coarse-bin fixed**, **57.22% global fixed**, and **49.17% random**. Conditional localization is **70.33% active** versus **61.76% coarse-bin fixed** and **54.55% global fixed**.
+
+The useful boundary is therefore:
+
+> **Moving address makes adaptive outcomes useful for localization; it does not yet make them necessary for coarse cause-family diagnosis.**
+
+G3C also makes an efference-copy assumption explicit: the cheap residual subtracts a known background command using the remembered baseline operator. The observer knows what action it issued, but not hidden external drive. That is not incidental bookkeeping; it is what keeps self-generated activity from being automatically mistaken for world/operator change.
+
+See [`GATE0.md`](GATE0.md), [`GATE1.md`](GATE1.md), [`GATE2.md`](GATE2.md), [`GATE3.md`](GATE3.md), and [`GATE3C.md`](GATE3C.md).
 
 ## Why this starts from dynamics, not reconstruction
 
@@ -121,18 +140,16 @@ bounded observer + interventions
 
 ## The next cheat to remove
 
-G3A/G3B still use a fixed base substrate and fixed perturbation addresses. That is why a static diagnostic panel can win.
+Every G3C held-out episode still uses the same underlying base geometry and long-range graph. Although the event address moves, “node 7” still has the same causal neighborhood in every world. The model can therefore learn a diagnostic atlas tied to literal coordinates.
 
-The next gate randomizes the **address** of local geometry/wiring/gain changes. The observer must use cheap residual evidence to infer where the surprise probably lives and then decide where/when to poke. The fixed panel attacker stays.
+The next gate randomizes the **substrate itself across worlds**. Training and test topologies must differ. Literal node IDs should become useless; only relative/local dynamical signatures should transfer.
 
-If active addressing does not beat a strong learned static panel once the hidden cause can move, then active measurement still has not earned architectural work.
-
-After that, the underlying substrate itself should change across worlds.
+If performance collapses there, the current `address` is still just a memorized coordinate system rather than an invariant causal address.
 
 ## Claim boundary
 
 This is not a claim that the brain is “made of eigenmodes”, that one spectral representation explains cognition, or that geometry dominates connectivity. Geometry, connectivity, delays, local nonlinearities, and input constrain different parts of the problem.
 
-The current gates are synthetic and generated from the decompositions they test. They demonstrate a causal-testing workflow, compositional transfer from known factorization, and a clear negative result showing when adaptive diagnosis is unnecessary. They do not establish a biological hierarchy.
+The current gates are synthetic and generated from the decompositions they test. They demonstrate a causal-testing workflow, compositional transfer from known factorization, a clear negative showing when adaptive diagnosis is unnecessary, and a narrower positive showing when moving addresses give adaptive outcomes value for localization. They do not establish a biological hierarchy.
 
 **Attackers first, claims second.**
